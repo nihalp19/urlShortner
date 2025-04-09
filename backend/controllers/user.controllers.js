@@ -1,5 +1,6 @@
 import User from "../models/user.models.js";
-
+import bcrypt from "bcryptjs";
+import {generateToken} from "../lib/generateToken.js"
 
 export const login = async (req, res) => {
     try {
@@ -18,17 +19,18 @@ export const login = async (req, res) => {
             res.status(400).json({ message: "invalid credentials" })
         }
 
-        const isPasswordMatched = await bcrypt.compare(user.password, password)
+        const isPasswordMatched = await bcrypt.compare(password, user.password)
         if (!isPasswordMatched) {
+            console.log("Hi")
             res.status(400).json({ message: "invalid credentials" })
         }
 
-        generateToken(user._id, res)
+        generateToken(user.userId, res)
 
         res.status(200).json({
             message: "user logined successfull", user: {
                 email: user.email,
-                id: user.userId
+                userId: user.userId
             }
         })
     } catch (error) {
@@ -40,10 +42,8 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        if (req.user) {
             res.clearCookie("accessToken")
             res.status(200).json({ message: "User is Logout" })
-        }
     } catch (error) {
         console.log(error.message)
         return res.status(500).json({ message: "Internal Server Error", error: error.message })
@@ -61,12 +61,12 @@ export const checkAuth = async (req, res) => {
         return res.status(200).json({
             message: "user is athorized", user: {
                 email: user.email,
-                id: user.userId
+                userId: user.userId
             }
         })
 
     } catch (error) {
-        console.log(error.message)
+        console.log("error",error.message)
         return res.status(500).json({message : "Internal Server Error",error: error.message})
     }
 }

@@ -1,15 +1,15 @@
-import User from "../models/user.models";
+import User from "../models/user.models.js";
 import bcrypt from "bcryptjs"
 
-export async function signup (email,password,userId){
+export async function signup (email,password){
     try {
         
-        if(!email || !password || !userId)
+        if(!email || !password )
         {
             console.log("missing fields")
         }
 
-        const userExists = User.findOne({email : email})
+        const userExists = await User.findOne({email : email})
 
         if(userExists){
             console.log("user already exits")
@@ -19,13 +19,11 @@ export async function signup (email,password,userId){
         const hashedPassword = await bcrypt.hash(password,10)
 
         const userCount = await User.find({})
-        const user = await User.create({
+        await User.create({
             email,
             password : hashedPassword,
-            userId : userCount.length
+            userId : userCount.length + 1
         })
-
-    
 
     } catch (error) {
         console.log(error.message)

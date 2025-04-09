@@ -6,7 +6,7 @@ const router = express.Router()
 
 
 router.post("/generate",authentication,generateShortUrl)
-router.get("/:id",authentication,redirectUrl)
+router.get("/:id",redirectUrl)
 
 
 export default router

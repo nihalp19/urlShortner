@@ -4,8 +4,8 @@ import cookieParser from "cookie-parser"
 import dotenv from "dotenv"
 import userRoutes from "./routes/user.routes.js"
 import urlRoutes from "./routes/url.routes.js"
+import {signup} from "./lib/userSignup.js"
 dotenv.config()
-
 
 
 const PORT = 3000
@@ -23,8 +23,7 @@ app.all("/",async(req,res) =>  {
     res.send("BACKEND IS RUNNING")
 })
 
-
-
+// signup("test123@gmail.com","test123")
 
 app.listen(PORT,() => {
     connectDB()

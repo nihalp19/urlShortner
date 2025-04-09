@@ -27,7 +27,7 @@ export const generateShortUrl = async (req, res) => {
             originalUrl,
             shortUrl,
             shortId,
-            expiryDate,
+            expirationDate : expiryDate,
             userId: req.user.userId,
             clickInfo: []
         })
@@ -42,7 +42,7 @@ export const generateShortUrl = async (req, res) => {
 
 export const redirectUrl = async (req, res) => {
     try {
-        const { shortId } = req.params
+        const shortId  = req.params.id
 
         if (!shortId) {
             return res.status(400).json({ message: "shortid is required" })
@@ -60,7 +60,7 @@ export const redirectUrl = async (req, res) => {
 
         setImmediate(async () => {
             const parser = new UAParser(req.headers['user-agent']);
-            link.clickLogs.push({
+            url.clickInfo.push({
                 clickdate: new Date(),
                 ip: req.ip,
                 browser: parser.getBrowser().name,
