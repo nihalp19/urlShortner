@@ -2,22 +2,35 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, User, BarChart3, LogOut } from 'lucide-react';
 import { userAuthStore } from '../store/userAuthStore';
+import {useNavigate} from "react-router-dom"
 
 export function Sidebar() {
 
-  const { isSideBarOpen, setisSideBarOpen ,logout} = userAuthStore()
-  console.log(isSideBarOpen)
+  const { isSideBarOpen, setisSideBarOpen, logout } = userAuthStore()
 
   const menuItems = [
     { icon: <User size={20} />, label: "Profile" },
-    { icon: <BarChart3 size={20} />, label: "Analytics" },
+    { icon: <BarChart3 size={20} />, label: "Links" },
     { icon: <LogOut size={20} />, label: "Logout" }
   ];
 
-  const handleLogout = (item) => {
-    if(item.label === "Logout")
-    logout()
-}
+  const navigate = useNavigate()
+
+  const handleClick = (item) => {
+    console.log("hi")
+    if (item.label === "Logout") {
+      logout()
+      setisSideBarOpen()
+    }
+    if (item.label === "Profile") {
+      navigate("/profile")
+      setisSideBarOpen()
+    }
+    if (item.label === "Links") {
+      navigate("/links")
+      setisSideBarOpen()
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -55,9 +68,10 @@ export function Sidebar() {
                   key={index}
                   whileHover={{ x: 5 }}
                   className="flex items-center gap-3 p-3 hover:bg-indigo-50 rounded-lg cursor-pointer mb-2"
+                  onClick={() => handleClick(item)}
                 >
                   <span className="text-gray-600">{item.icon}</span>
-                  <span className="font-medium text-gray-700" onClick={() => handleLogout(item)}>{item.label}</span>
+                  <span className="font-medium text-gray-700">{item.label}</span>
                 </motion.div>
               ))}
             </div>
