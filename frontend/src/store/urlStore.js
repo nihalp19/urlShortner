@@ -4,9 +4,9 @@ import { axiosInstance } from "../axios/axiosInstance"
 
 export const urlStore = create((set,get) => ({
     shortenedUrl : null,
-    allUrls : [],
+    allUrls : null,
     urlLoading : false,
-    
+    analyticalUrl : null,
 
     generateShortUrl : async({originalUrl}) => {
         set({urlLoading : true})
@@ -29,6 +29,25 @@ export const urlStore = create((set,get) => ({
         }finally{
             set({urlLoading : false})
         }
+    },
+
+    getAllUrls : async() => {
+        try {
+            const res = await axiosInstance.get("/fetch/links")
+            set({allUrls : res.data.urls})
+        } catch (error) {
+            console.log("error while fetching all urls",error.message)
+        }
+    },
+
+    getUrl : async(id) => {
+        try {
+            const res = await axiosInstance.get(`/links/${id}`)
+            set({analyticalUrl : res.data.url})
+        } catch (error) {
+            console.log("error while fetching error",error.messafe)
+        }
     }
+ 
 
 }))
