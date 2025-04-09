@@ -34,6 +34,9 @@ const UrlInfoSchema = new mongoose.Schema({
             },
             browser : {
                 type : String
+            },
+            country  : {
+                type : String
             }
         }
     ]

@@ -1,7 +1,8 @@
+import { getCountryFromIP } from "../lib/getCountryFromIP.js";
 import UrlInfo from "../models/url.models.js";
-import User from "../models/user.models.js";
 import shortid from "shortid";
 import { UAParser } from "ua-parser-js";
+import { generateInfo } from "../services/generateInfo.js";
 
 export const generateShortUrl = async (req, res) => {
     try {
@@ -57,13 +58,17 @@ export const redirectUrl = async (req, res) => {
             return res.status(400).json({ message: "url is expired" })
         }
 
+        const country = await getCountryFromIP(req.ip)
+        console.log("country :",country)
+
         setImmediate(async () => {
             const parser = new UAParser(req.headers['user-agent']);
             url.clickInfo.push({
                 clickdate: new Date(),
                 ip: req.ip,
                 browser: parser.getBrowser().name,
-                device: parser.getDevice().type || 'desktop'
+                device: parser.getDevice().type || 'desktop',
+                country,
             });
             await url.save();
         });
@@ -91,7 +96,7 @@ export const getAllUrls = async(req,res) => {
     }
 }
 
-export const getUrlInfo = async() => {
+export const getUrlInfo = async(req,res) => {
     try {
         const id = req.params.id
         if(!id) {
@@ -104,9 +109,12 @@ export const getUrlInfo = async() => {
             return res.status(200).json({message : "url not found"})
         }
 
-        return res.status(200).json({message : "url is fetched",url : url})
+        const {clicksPerDay,browserCount,deviceCount,countryCount} = generateInfo(url)
+
+        return res.status(200).json({message : "url is fetched",url : url,clicksPerDay,browserCount,deviceCount,countryCount})
     } catch (error) {
         console.log("error while fetching single url",error.message)
         return res.status(500).json({message : "Internal Server Error",error : error.message})
     }
 }
+
