@@ -1,4 +1,4 @@
-import User from "../models/user.models";
+import User from "../models/user.models.js";
 
 
 export const login = async (req, res) => {
@@ -51,7 +51,7 @@ export const logout = async (req, res) => {
 }
 
 
-export const checkauth = async (req, res) => {
+export const checkAuth = async (req, res) => {
     try {
         const { user } = req.body
         if (!user) {

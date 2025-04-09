@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken"
 import dotenv from "dotenv"
-import User from "../models/user.models"
+import User from "../models/user.models.js"
 
 dotenv.config()
 

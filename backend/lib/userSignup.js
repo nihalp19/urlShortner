@@ -1,6 +1,5 @@
 import User from "../models/user.models";
 import bcrypt from "bcryptjs"
-import { generateToken } from "./generateToken";
 
 export async function signup (email,password,userId){
     try {
