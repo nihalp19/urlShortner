@@ -7,30 +7,40 @@ export const login = async (req, res) => {
         const { email, password } = req.body
 
         if (!email) {
-            res.status(400).json({ message: " email is required" })
+            console.log("email")
+            return res.status(400).json({ message: "email is required" })
         }
         if (!password) {
-            res.status(400).json({ message: " password is required" })
+            console.log("password")
+            return res.status(400).json({ message: "password is required" })
         }
 
         const user = await User.findOne({ email: email })
 
         if (!user) {
-            res.status(400).json({ message: "invalid credentials" })
+            console.log("hi")
+            return res.status(400).json({ message: "invalid credentials" })
         }
 
         const isPasswordMatched = await bcrypt.compare(password, user.password)
         if (!isPasswordMatched) {
-            console.log("Hi")
-            res.status(400).json({ message: "invalid credentials" })
+            console.log("Hiii")
+            return res.status(400).json({ message: "invalid credentials" })
         }
 
-        generateToken(user.userId, res)
+        const {accessToken} = await generateToken(user.userId, res)
 
-        res.status(200).json({
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true, // For security reasons
+            secure: process.env.NODE_ENV === "production", // Use only in production with HTTPS
+            maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
+        });
+
+        return res.status(200).json({
             message: "user logined successfull", user: {
                 email: user.email,
-                userId: user.userId
+                userId: user.userId,
+                name : user.name
             }
         })
     } catch (error) {
@@ -43,7 +53,7 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
             res.clearCookie("accessToken")
-            res.status(200).json({ message: "User is Logout" })
+           return res.status(200).json({ message: "User is Logout" })
     } catch (error) {
         console.log(error.message)
         return res.status(500).json({ message: "Internal Server Error", error: error.message })
@@ -53,7 +63,7 @@ export const logout = async (req, res) => {
 
 export const checkAuth = async (req, res) => {
     try {
-        const { user } = req.body
+        const user = req.user
         if (!user) {
             return res.status(401).json({ message: "unauthorized" })
         }
@@ -61,7 +71,8 @@ export const checkAuth = async (req, res) => {
         return res.status(200).json({
             message: "user is athorized", user: {
                 email: user.email,
-                userId: user.userId
+                userId: user.userId,
+                name : user.name
             }
         })
 

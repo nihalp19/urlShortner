@@ -21,7 +21,6 @@ export const generateShortUrl = async (req, res) => {
 
         const expiryTimestamp = Date.now() + 7 * 24 * 60 * 60 * 1000;
         const expiryDate = new Date(expiryTimestamp);
-        console.log(expiryDate);
 
         const url = await UrlInfo.create({
             originalUrl,
@@ -73,6 +72,41 @@ export const redirectUrl = async (req, res) => {
         return res.redirect(url.originalUrl)
     } catch (error) {
         console.log(error.message)
+        return res.status(500).json({message : "Internal Server Error",error : error.message})
+    }
+}
+
+
+export const getAllUrls = async(req,res) => {
+    console.log("hi")
+    try {
+        const user = req.user
+
+        const urls = await UrlInfo.find({userId : user.userId})
+
+        return res.status(200).json({message : "all urls are fetched successfully",urls : urls,})
+    } catch (error) {
+        console.log("error while fetching url",error.message)
+        return res.status(500).json({message : "Internal Server Error",error : error.message})
+    }
+}
+
+export const getUrlInfo = async() => {
+    try {
+        const id = req.params.id
+        if(!id) {
+            return res.status(400).json({message : "id is not provided"})
+        }
+
+        const url = await UrlInfo.findOne({_id : id})
+
+        if(!url){
+            return res.status(200).json({message : "url not found"})
+        }
+
+        return res.status(200).json({message : "url is fetched",url : url})
+    } catch (error) {
+        console.log("error while fetching single url",error.message)
         return res.status(500).json({message : "Internal Server Error",error : error.message})
     }
 }

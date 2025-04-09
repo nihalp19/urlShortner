@@ -1,10 +1,10 @@
 import User from "../models/user.models.js";
 import bcrypt from "bcryptjs"
 
-export async function signup (email,password){
+export async function signup (name,email,password){
     try {
         
-        if(!email || !password )
+        if(!name || !email || !password )
         {
             console.log("missing fields")
         }
@@ -20,6 +20,7 @@ export async function signup (email,password){
 
         const userCount = await User.find({})
         await User.create({
+            name,
             email,
             password : hashedPassword,
             userId : userCount.length + 1

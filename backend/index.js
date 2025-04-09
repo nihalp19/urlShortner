@@ -5,12 +5,20 @@ import dotenv from "dotenv"
 import userRoutes from "./routes/user.routes.js"
 import urlRoutes from "./routes/url.routes.js"
 import {signup} from "./lib/userSignup.js"
+import cors from "cors"
 dotenv.config()
 
 
 const PORT = 3000
 
 const app = express()
+
+app.use(cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    credentials: true // Allow cookies or authentication credentials
+  }));
 
 app.use(express.json({limit : "100mb"}))
 app.use(cookieParser())
@@ -23,7 +31,7 @@ app.all("/",async(req,res) =>  {
     res.send("BACKEND IS RUNNING")
 })
 
-// signup("test123@gmail.com","test123")
+// signup("dacoid","test123@gmail.com","test123")
 
 app.listen(PORT,() => {
     connectDB()
