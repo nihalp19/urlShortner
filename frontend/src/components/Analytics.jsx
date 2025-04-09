@@ -1,81 +1,67 @@
-import React from 'react'
-import { motion } from 'framer-motion'
-import { BarChart, PieChart, Link, Globe, Smartphone, Monitor } from 'lucide-react'
+import React, { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { useParams } from 'react-router-dom';
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+  ZoomableGroup
+} from 'react-simple-maps';
 import {
   AreaChart,
   Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
   PieChart as RePieChart,
   Pie,
-  Cell
-} from 'recharts'
-import { format, subDays } from 'date-fns'
+  Tooltip,
+  ResponsiveContainer,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid
+} from 'recharts';
+
+import { Link, Globe, Smartphone, Monitor } from 'lucide-react';
+import { urlStore } from '../store/urlStore';
+import LoaderSpinner from './LoaderSpinner';
+import { userAuthStore } from '../store/userAuthStore';
+
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+// Dummy chart data
+
 
 function Analytics() {
-  // Mock data
-  const clickData = Array.from({ length: 7 }, (_, i) => ({
-    date: format(subDays(new Date(), i), 'MMM dd'),
-    clicks: Math.floor(Math.random() * 100)
-  })).reverse()
 
-  const deviceData = [
-    { name: 'Desktop', value: 300 },
-    { name: 'Mobile', value: 200 },
-    { name: 'Tablet', value: 100 }
-  ]
+  const { user } = userAuthStore()
+  const { getUrl, chartData, analyticalUrl, urlLoading } = urlStore()
+  const { id } = useParams()
 
-  const browserData = [
-    { name: 'Chrome', value: 400 },
-    { name: 'Firefox', value: 200 },
-    { name: 'Safari', value: 100 },
-    { name: 'Edge', value: 50 }
-  ]
+  useEffect(() => {
+    getUrl(id)
+  }, [getUrl])
 
-  const COLORS = [
-    'rgba(99, 102, 241, 0.8)',
-    'rgba(167, 139, 250, 0.8)',
-    'rgba(216, 180, 254, 0.8)',
-    'rgba(147, 197, 253, 0.8)'
-  ]
+
+  const clickData = chartData?.clickData || [];
+  const deviceData = chartData?.deviceData || [];
+  const browserData = chartData?.browserData || [];
+  const geoData = chartData?.countryData || [];
+
+  const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981'];
+  console.log("geoData", geoData)
+  console.log(chartData)
+
+
+  if (urlLoading || !user) <LoaderSpinner />
+
+
+
+
 
   return (
-    <div className="p-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-7xl mx-auto"
-      >
-        {/* Header */}
-        <div className="text-center mb-12">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="inline-block p-3 bg-indigo-600 rounded-full mb-8"
-          >
-            <BarChart size={32} className="text-white" />
-          </motion.div>
-          <motion.h1
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600"
-          >
-            Link Analytics
-          </motion.h1>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="text-gray-600"
-          >
-            https://short.url/abc123
-          </motion.div>
-        </div>
-
-        {/* Stats Overview */}
+    <div className="min-h-screen bg-gray-50 p-8">
+      <motion.div className="max-w-7xl mx-auto">
+        {/* Metrics Grid */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -83,10 +69,26 @@ function Analytics() {
           className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8"
         >
           {[
-            { icon: <Link size={24} />, label: 'Total Clicks', value: '1,234' },
-            { icon: <Globe size={24} />, label: 'Countries', value: '24' },
-            { icon: <Smartphone size={24} />, label: 'Devices', value: '3' },
-            { icon: <Monitor size={24} />, label: 'Browsers', value: '4' }
+            {
+              icon: <Link size={24} />,
+              label: 'Total Clicks',
+              value: analyticalUrl?.clickInfo.length
+            },
+            {
+              icon: <Globe size={24} />,
+              label: 'Countries',
+              value: chartData?.countryData.length
+            },
+            {
+              icon: <Smartphone size={24} />,
+              label: 'Devices',
+              value: chartData?.deviceData.length
+            },
+            {
+              icon: <Monitor size={24} />,
+              label: 'Browsers',
+              value: chartData?.browserData.length
+            }
           ].map((stat, index) => (
             <motion.div
               key={index}
@@ -106,13 +108,85 @@ function Analytics() {
           ))}
         </motion.div>
 
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Geographic Map */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white rounded-xl p-6 shadow-lg mb-8"
+        >
+          <h3 className="text-xl font-semibold mb-4">Geographic Distribution</h3>
+          <div className="h-[400px]">
+            <div className="w-full h-[400px] overflow-hidden">
+              <ComposableMap
+                projectionConfig={{
+                  scale: 150,
+                  center: [0, 20]
+                }}
+                width={800}
+                height={400}
+              >
+                <ZoomableGroup>
+                  <Geographies geography={geoUrl}>
+                    {({ geographies }) =>
+                      geographies.map((geo) => (
+                        <Geography
+                          key={geo.rsmKey}
+                          geography={geo}
+                          fill="#E5E7EB"
+                          stroke="#D1D5DB"
+                          strokeWidth={0.5}
+                          style={{
+                            default: { outline: 'none' },
+                            hover: { fill: 'rgba(99, 102, 241, 0.2)', outline: 'none' },
+                            pressed: { outline: 'none' }
+                          }}
+                        />
+                      ))
+                    }
+                  </Geographies>
+                  {chartData && geoData.map(({ name, coordinates, clicks }) => {
+                    // Ensure coordinates are valid before rendering the marker
+                    if (!coordinates || coordinates.length === 0) return null; // Skip if coordinates are null or empty
+
+                    // Modify the radius to make the points larger by multiplying the value
+                    const radius = Math.sqrt(clicks) / 3 * 10; // Increase the multiplier (4 in this case)
+
+                    return (
+                      <Marker key={name} coordinates={coordinates}>
+                        <motion.circle
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.5 }}
+                          r={radius}
+                          fill="rgba(99, 102, 241, 0.6)"
+                          stroke="#fff"
+                          strokeWidth={1}
+                        />
+                        <motion.circle
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ duration: 0.5, delay: 0.2 }}
+                          r={radius}
+                          fill="rgba(99, 102, 241, 0.2)"
+                          stroke="none"
+                        />
+                      </Marker>
+                    );
+                  })}
+                </ZoomableGroup>
+              </ComposableMap>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Charts Section (Updated for full-width stacked layout) */}
+        <div className="flex flex-col gap-8">
           {/* Clicks Over Time */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+            transition={{ delay: 0.5 }}
             className="bg-white rounded-xl p-6 shadow-lg"
           >
             <h3 className="text-xl font-semibold mb-4">Clicks Over Time</h3>
@@ -134,72 +208,71 @@ function Analytics() {
             </div>
           </motion.div>
 
-          {/* Device & Browser Distribution */}
-          <div className="grid grid-cols-1 gap-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="bg-white rounded-xl p-6 shadow-lg"
-            >
-              <h3 className="text-xl font-semibold mb-4">Device Distribution</h3>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie
-                      data={deviceData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label
-                    >
-                      {deviceData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </RePieChart>
-                </ResponsiveContainer>
-              </div>
-            </motion.div>
+          {/* Device Distribution */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4">Device Distribution</h3>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RePieChart>
+                  <Pie
+                    data={deviceData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label
+                  >
+                    {chartData && deviceData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </RePieChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="bg-white rounded-xl p-6 shadow-lg"
-            >
-              <h3 className="text-xl font-semibold mb-4">Browser Distribution</h3>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RePieChart>
-                    <Pie
-                      data={browserData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                      label
-                    >
-                      {browserData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </RePieChart>
-                </ResponsiveContainer>
-              </div>
-            </motion.div>
-          </div>
+          {/* Browser Distribution */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="bg-white rounded-xl p-6 shadow-lg"
+          >
+            <h3 className="text-xl font-semibold mb-4">Browser Distribution</h3>
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RePieChart>
+                  <Pie
+                    data={browserData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label
+                  >
+                    {chartData && browserData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </RePieChart>
+              </ResponsiveContainer>
+            </div>
+          </motion.div>
         </div>
       </motion.div>
     </div>
-  )
+  );
 }
 
-export default Analytics
+export default Analytics;

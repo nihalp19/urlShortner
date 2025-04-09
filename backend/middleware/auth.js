@@ -21,7 +21,6 @@ export async function authentication (req,res,next){
 
         req.user = user
 
-        console.log("hi")
         next()
 
     } catch (error) {

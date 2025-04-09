@@ -10,16 +10,22 @@ import LoaderSpinner from "./components/LoaderSpinner";
 import { useEffect } from "react";
 import ProfilePage from "./pages/ProfilePage";
 import Analytics from "./components/Analytics";
+import { urlStore } from "./store/urlStore";
 
 
 function App() {
-  const { user, loading, checkAuth } = userAuthStore()
+  const { user, loading, checkAuth} = userAuthStore()
+  const {getAllUrls} = urlStore()
 
   useEffect(() => {
     checkAuth()
   }, [checkAuth])
 
-  if (loading) return <LoaderSpinner />
+  useEffect(() => {
+    getAllUrls()
+  }, [getAllUrls])
+
+  if (loading || !user) return <LoaderSpinner />
 
   return (
     <div className="w-full min-h-screen">

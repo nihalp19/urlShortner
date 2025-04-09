@@ -2,27 +2,13 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { Link as RouterLink } from 'react-router-dom'
 import { BarChart, ExternalLink, Trash2 } from 'lucide-react'
+import { urlStore } from '../store/urlStore'
 
 function LinkPage() {
-  // Mock data for links
-  const links = [
-    {
-      id: '1',
-      originalUrl: 'https://example.com/very/long/url/that/needs/to/be/shortened/1',
-      shortUrl: 'https://short.url/abc123',
-      clicks: 1234,
-      expiryDate: '2024-12-31',
-      createdAt: '2023-12-01'
-    },
-    {
-      id: '2',
-      originalUrl: 'https://example.com/another/very/long/url/2',
-      shortUrl: 'https://short.url/def456',
-      clicks: 567,
-      expiryDate: '2024-12-31',
-      createdAt: '2023-12-02'
-    }
-  ]
+
+  const {allUrls} = urlStore()
+
+
 
   return (
     <div className="p-8">
@@ -51,9 +37,9 @@ function LinkPage() {
         </div>
 
         <div className="space-y-4">
-          {links.map((link) => (
+          {allUrls && allUrls.map((link) => (
             <motion.div
-              key={link.id}
+              key={link._id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               whileHover={{ y: -2 }}
@@ -62,20 +48,20 @@ function LinkPage() {
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900 truncate">
-                    {link.originalUrl}
+                    {link?.originalUrl}
                   </p>
                   <p className="text-sm text-indigo-600">
-                    {link.shortUrl}
+                    {link?.shortUrl}
                   </p>
                   <div className="mt-2 flex items-center text-sm text-gray-500">
-                    <span className="mr-4">Clicks: {link.clicks}</span>
-                    <span className="mr-4">Expires: {link.expiryDate}</span>
-                    <span>Created: {link.createdAt}</span>
+                    <span className="mr-4">Clicks: {link?.clickInfo.length}</span>
+                    <span className="mr-4">Expires: {link?.expirationDate.split("T")[0]}</span>
+                    <span>Created: {link?.createdAt.split("T")[0]}</span>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4 ml-4">
                   <RouterLink
-                    to={`/analytics/${link.id}`}
+                    to={`/analytics/${link?._id}`}
                     className="text-gray-400 hover:text-indigo-600 transition-colors"
                   >
                     <motion.div whileHover={{ scale: 1.1 }}>
@@ -83,7 +69,7 @@ function LinkPage() {
                     </motion.div>
                   </RouterLink>
                   <a
-                    href={link.shortUrl}
+                    href={link?.shortUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-gray-400 hover:text-indigo-600 transition-colors"
@@ -92,14 +78,6 @@ function LinkPage() {
                       <ExternalLink size={20} />
                     </motion.div>
                   </a>
-                  <button
-                    onClick={() => {/* Handle delete */}}
-                    className="text-gray-400 hover:text-red-600 transition-colors"
-                  >
-                    <motion.div whileHover={{ scale: 1.1 }}>
-                      <Trash2 size={20} />
-                    </motion.div>
-                  </button>
                 </div>
               </div>
             </motion.div>

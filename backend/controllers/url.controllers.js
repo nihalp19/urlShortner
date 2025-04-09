@@ -27,7 +27,7 @@ export const generateShortUrl = async (req, res) => {
             originalUrl,
             shortUrl,
             shortId,
-            expirationDate : expiryDate,
+            expirationDate: expiryDate,
             userId: req.user.userId,
             clickInfo: []
         })
@@ -42,7 +42,7 @@ export const generateShortUrl = async (req, res) => {
 
 export const redirectUrl = async (req, res) => {
     try {
-        const shortId  = req.params.id
+        const shortId = req.params.id
 
         if (!shortId) {
             return res.status(400).json({ message: "shortid is required" })
@@ -59,7 +59,7 @@ export const redirectUrl = async (req, res) => {
         }
 
         const country = await getCountryFromIP(req.ip)
-        console.log("country :",country)
+        console.log("country :", country)
 
         setImmediate(async () => {
             const parser = new UAParser(req.headers['user-agent']);
@@ -77,44 +77,47 @@ export const redirectUrl = async (req, res) => {
         return res.redirect(url.originalUrl)
     } catch (error) {
         console.log(error.message)
-        return res.status(500).json({message : "Internal Server Error",error : error.message})
+        return res.status(500).json({ message: "Internal Server Error", error: error.message })
     }
 }
 
 
-export const getAllUrls = async(req,res) => {
-    console.log("hi")
+export const getAllUrls = async (req, res) => {
     try {
         const user = req.user
 
-        const urls = await UrlInfo.find({userId : user.userId})
+        const urls = await UrlInfo.find({ userId: user.userId })
 
-        return res.status(200).json({message : "all urls are fetched successfully",urls : urls,})
+        return res.status(200).json({ message: "all urls are fetched successfully", urls: urls, })
     } catch (error) {
-        console.log("error while fetching url",error.message)
-        return res.status(500).json({message : "Internal Server Error",error : error.message})
+        console.log("error while fetching url", error.message)
+        return res.status(500).json({ message: "Internal Server Error", error: error.message })
     }
 }
 
-export const getUrlInfo = async(req,res) => {
+export const getUrlInfo = async (req, res) => {
     try {
         const id = req.params.id
-        if(!id) {
-            return res.status(400).json({message : "id is not provided"})
+        if (!id) {
+            return res.status(400).json({ message: "id is not provided" })
         }
 
-        const url = await UrlInfo.findOne({_id : id})
+        const url = await UrlInfo.findOne({ _id: id })
 
-        if(!url){
-            return res.status(200).json({message : "url not found"})
+        if (!url) {
+            return res.status(200).json({ message: "url not found" })
         }
 
-        const {clicksPerDay,browserCount,deviceCount,countryCount} = generateInfo(url)
+        const { clickData, browserData, deviceData, countryData } = generateInfo(url)
 
-        return res.status(200).json({message : "url is fetched",url : url,clicksPerDay,browserCount,deviceCount,countryCount})
+        return res.status(200).json({
+            message: "url is fetched", url: url, chartData: {
+                clickData, browserData, deviceData, countryData 
+            }
+        })
     } catch (error) {
-        console.log("error while fetching single url",error.message)
-        return res.status(500).json({message : "Internal Server Error",error : error.message})
+        console.log("error while fetching single url", error.message)
+        return res.status(500).json({ message: "Internal Server Error", error: error.message })
     }
 }
 

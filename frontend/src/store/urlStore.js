@@ -7,6 +7,9 @@ export const urlStore = create((set,get) => ({
     allUrls : null,
     urlLoading : false,
     analyticalUrl : null,
+    chartData : null,
+
+
 
     generateShortUrl : async({originalUrl}) => {
         set({urlLoading : true})
@@ -32,22 +35,29 @@ export const urlStore = create((set,get) => ({
     },
 
     getAllUrls : async() => {
+        set({urlLoading : true})
         try {
             const res = await axiosInstance.get("/fetch/links")
             set({allUrls : res.data.urls})
         } catch (error) {
             console.log("error while fetching all urls",error.message)
+        }finally{
+            set({urlLoading : true})
         }
     },
 
     getUrl : async(id) => {
+        set({urlLoading : true})
         try {
             const res = await axiosInstance.get(`/links/${id}`)
             set({analyticalUrl : res.data.url})
+            console.log("hiii",res.data.chartData)
+            set({chartData : res.data.chartData})
         } catch (error) {
             console.log("error while fetching error",error.messafe)
+        }finally{
+            set({urlLoading : true})
         }
     }
  
-
 }))
