@@ -58,7 +58,7 @@ export const redirectUrl = async (req, res) => {
             return res.status(400).json({ message: "url is expired" })
         }
 
-        const country = await getCountryFromIP(req.ip)
+        const country = await getCountryFromIP()
         console.log("country :", country)
 
         setImmediate(async () => {
