@@ -31,7 +31,11 @@ export const login = async (req, res) => {
         const { accessToken } = await generateToken(user.userId, res)
 
         res.cookie("accessToken", accessToken, {
-            maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+            maxAge: 3 * 24 * 60 * 60 * 1000,
+
         });
 
         return res.status(200).json({
