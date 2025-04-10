@@ -146,11 +146,9 @@ function Analytics() {
                     }
                   </Geographies>
                   {chartData && geoData.map(({ name, coordinates, clicks }) => {
-                    // Ensure coordinates are valid before rendering the marker
-                    if (!coordinates || coordinates.length === 0) return null; // Skip if coordinates are null or empty
+                    if (!coordinates || coordinates.length === 0) return null; 
 
-                    // Modify the radius to make the points larger by multiplying the value
-                    const radius = Math.sqrt(clicks) / 3 * 10; // Increase the multiplier (4 in this case)
+                    const radius = Math.sqrt(clicks) / 3 * 10; 
 
                     return (
                       <Marker key={name} coordinates={coordinates}>

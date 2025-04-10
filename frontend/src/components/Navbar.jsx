@@ -2,11 +2,21 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link2, Menu } from 'lucide-react';
 import { userAuthStore } from '../store/userAuthStore';
+import { useNavigate } from 'react-router-dom';
 import avatar from "../assets/avatar.jpg"
 
 export function Navbar() {
     const {user,setisSideBarOpen} = userAuthStore()
 
+    const navigate = useNavigate()
+
+    const handleNavigate = () => {
+        navigate("/")
+    }
+
+    const handleNavigateProfile = () => {
+        navigate("/profile")
+    }
 
     return (
         <nav className="bg-white shadow-lg">
@@ -19,13 +29,13 @@ export function Navbar() {
                             onClick={setisSideBarOpen}
                             className="p-2 hover:bg-gray-100 rounded-lg"
                         >
-                            <Menu size={24} />
+                            <Menu size={24}/>
                         </motion.button>
-                        <Link2 size={24} className="text-indigo-600" />
-                        <span className="font-bold text-xl text-indigo-600">URLify</span>
+                        <Link2 size={24} className="text-indigo-600 cursor-pointer" onClick={handleNavigate} />
+                        <span className="font-bold text-xl text-indigo-600 cursor-pointer" onClick={handleNavigate}>URLify</span>
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4" onClick={handleNavigateProfile}>
                         <motion.div
                             whileHover={{ scale: 1.05 }}
                             className="flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-lg cursor-pointer"
