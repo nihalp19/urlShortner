@@ -23,8 +23,8 @@ import {
 
 import { Link, Globe, Smartphone, Monitor } from 'lucide-react';
 import { urlStore } from '../store/urlStore';
-import LoaderSpinner from './LoaderSpinner';
 import { userAuthStore } from '../store/userAuthStore';
+import DataLoader from './DataLoader';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -52,7 +52,7 @@ function Analytics() {
   console.log(chartData)
 
 
-  if (urlLoading || !user) <LoaderSpinner />
+  if (urlLoading || !user) <DataLoader />
 
 
 

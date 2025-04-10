@@ -14,10 +14,10 @@ const PORT = 3000
 const app = express()
 
 app.use(cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE","PATCH"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
-    credentials: true // Allow cookies or authentication credentials
+    origin: ["http://localhost:5173",process.env.FRONTEND_URL],
+    methods: ["GET", "POST", "PUT", "DELETE","PATCH"], 
+    allowedHeaders: ["Content-Type", "Authorization"], 
+    credentials: true 
   }));
 
 app.use(express.json({limit : "100mb"}))
