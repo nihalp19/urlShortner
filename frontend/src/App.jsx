@@ -1,7 +1,7 @@
 import { Routes, Route, Link, Navigate } from "react-router-dom"; // Removed Router import since it's not needed
 import { Toaster } from "react-hot-toast";
 import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/loginPage";
+import LoginPage from "./pages/LoginPage";
 import LinkPage from "./pages/LinkPage";
 import { Navbar } from "./components/Navbar";
 import { Sidebar } from "./components/SideBar";
