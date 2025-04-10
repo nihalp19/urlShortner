@@ -18,7 +18,7 @@ export const generateShortUrl = async (req, res) => {
         }
 
         const shortId = shortid.generate(5)
-        const shortUrl = `http://localhost:3000/${shortId}`
+        const shortUrl = `https://urlshortner-production-e39c.up.railway.app/${shortId}`
 
         const expiryTimestamp = Date.now() + 7 * 24 * 60 * 60 * 1000;
         const expiryDate = new Date(expiryTimestamp);
