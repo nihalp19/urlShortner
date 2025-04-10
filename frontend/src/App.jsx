@@ -4,7 +4,7 @@ import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import LinkPage from "./pages/LinkPage";
 import { Navbar } from "./components/Navbar";
-import { Sidebar } from "./components/SideBar";
+import { Sidebar } from "./components/Sidebar";
 import { userAuthStore } from "./store/userAuthStore";
 import LoaderSpinner from "./components/LoaderSpinner";
 import { useEffect } from "react";
