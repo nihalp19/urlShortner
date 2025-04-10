@@ -1,6 +1,6 @@
 import User from "../models/user.models.js";
 import bcrypt from "bcryptjs";
-import {generateToken} from "../lib/generateToken.js"
+import { generateToken } from "../lib/generateToken.js"
 
 export const login = async (req, res) => {
     try {
@@ -28,11 +28,9 @@ export const login = async (req, res) => {
             return res.status(400).json({ message: "invalid credentials" })
         }
 
-        const {accessToken} = await generateToken(user.userId, res)
+        const { accessToken } = await generateToken(user.userId, res)
 
         res.cookie("accessToken", accessToken, {
-            httpOnly: true, // For security reasons
-            secure: process.env.NODE_ENV === "production", // Use only in production with HTTPS
             maxAge: 3 * 24 * 60 * 60 * 1000, // 3 days in milliseconds
         });
 
@@ -40,7 +38,7 @@ export const login = async (req, res) => {
             message: "user logined successfull", user: {
                 email: user.email,
                 userId: user.userId,
-                name : user.name
+                name: user.name
             }
         })
     } catch (error) {
@@ -52,8 +50,8 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-            res.clearCookie("accessToken")
-           return res.status(200).json({ message: "User is Logout" })
+        res.clearCookie("accessToken")
+        return res.status(200).json({ message: "User is Logout" })
     } catch (error) {
         console.log(error.message)
         return res.status(500).json({ message: "Internal Server Error", error: error.message })
@@ -72,12 +70,12 @@ export const checkAuth = async (req, res) => {
             message: "user is athorized", user: {
                 email: user.email,
                 userId: user.userId,
-                name : user.name
+                name: user.name
             }
         })
 
     } catch (error) {
-        console.log("error",error.message)
-        return res.status(500).json({message : "Internal Server Error",error: error.message})
+        console.log("error", error.message)
+        return res.status(500).json({ message: "Internal Server Error", error: error.message })
     }
 }
