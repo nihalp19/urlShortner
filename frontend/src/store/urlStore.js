@@ -10,7 +10,7 @@ export const urlStore = create((set,get) => ({
     chartData : null,
 
 
-
+    
     generateShortUrl : async({originalUrl}) => {
         set({urlLoading : true})
         try {

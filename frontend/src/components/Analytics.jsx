@@ -58,7 +58,6 @@ function Analytics() {
 
   const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981'];
   console.log("geoData", geoData)
-  console.log(chartData)
 
 
   if (showLoader || urlLoading) {

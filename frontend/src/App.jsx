@@ -19,13 +19,14 @@ function App() {
 
   useEffect(() => {
     checkAuth()
+    console.log("hiii")
   }, [checkAuth])
 
   useEffect(() => {
     getAllUrls()
+    console.log("hi")
   }, [getAllUrls])
 
-  console.log(loading)
   if (loading) return <LoaderSpinner/>
       
 
