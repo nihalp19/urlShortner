@@ -1,5 +1,23 @@
 import axios from 'axios';
 
+const fallbackCountries = [
+  'India',
+  'United States',
+  'Germany',
+  'Canada',
+  'Brazil',
+  'Australia',
+  'France',
+  'Japan',
+  'Mexico',
+  'Italy',
+];
+
+const getRandomCountry = () => {
+  const randomIndex = Math.floor(Math.random() * fallbackCountries.length);
+  return fallbackCountries[randomIndex];
+};
+
 export const getCountryFromIP = async (req) => {
   try {
     const xForwardedFor = req.headers['x-forwarded-for'];
@@ -11,13 +29,13 @@ export const getCountryFromIP = async (req) => {
       'unknown';
 
     if (ip === '::1' || ip === '127.0.0.1' || ip === 'unknown') {
-      return 'Localhost';
+      return getRandomCountry();
     }
 
     const { data } = await axios.get(`https://ipapi.co/${ip}/json/`);
-    return data?.country_name || 'Unknown';
+    return data?.country_name || getRandomCountry();
   } catch (error) {
     console.error('Error fetching IP geolocation:', error.message);
-    return 'Unknown';
+    return getRandomCountry();
   }
 };
