@@ -11,8 +11,10 @@ function HomePage() {
   
   const { shortenedUrl, generateShortUrl } = urlStore();
 
+
   const handleShorten = () => {
     generateShortUrl({ originalUrl: url });
+
   };
 
   return (

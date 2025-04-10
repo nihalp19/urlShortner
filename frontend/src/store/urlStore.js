@@ -42,7 +42,7 @@ export const urlStore = create((set,get) => ({
         } catch (error) {
             console.log("error while fetching all urls",error.message)
         }finally{
-            set({urlLoading : true})
+            set({urlLoading : false})
         }
     },
 
@@ -56,7 +56,7 @@ export const urlStore = create((set,get) => ({
         } catch (error) {
             console.log("error while fetching error",error.messafe)
         }finally{
-            set({urlLoading : true})
+            set({urlLoading : false})
         }
     }
  

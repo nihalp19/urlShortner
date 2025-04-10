@@ -21,6 +21,7 @@ export function Sidebar() {
     if (item.label === "Logout") {
       logout()
       setisSideBarOpen()
+      navigate("/login")
     }
     if (item.label === "Profile") {
       navigate("/profile")

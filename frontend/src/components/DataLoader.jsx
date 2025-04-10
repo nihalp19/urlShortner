@@ -2,19 +2,19 @@ import { useState, useEffect } from 'react';
 import { BarChart3, Globe, Laptop, MousePointer } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-function DataLoader({ isLoading }) {
+function DataLoader({ urlLoading }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
-    if (isLoading) {
+    if (urlLoading) {
       const timer = setInterval(() => {
         setCurrentIndex((prev) => (prev + 1) % loadingItems.length);
       }, 2000);
       return () => clearInterval(timer);
     }
-  }, [isLoading]);
+  }, [urlLoading]);
 
-  if (!isLoading) return null;
+  if (!urlLoading) return null;
 
   const loadingItems = [
     { icon: MousePointer, text: 'Analyzing Click Data...' },

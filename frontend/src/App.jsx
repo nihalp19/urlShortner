@@ -25,7 +25,9 @@ function App() {
     getAllUrls()
   }, [getAllUrls])
 
-  if (loading || !user) return <LoaderSpinner />
+  console.log(loading)
+  if (loading) return <LoaderSpinner/>
+      
 
   return (
     <div className="w-full min-h-screen">

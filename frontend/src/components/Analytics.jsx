@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
+import { useState } from 'react';
 import {
   ComposableMap,
   Geographies,
@@ -33,13 +34,21 @@ const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 function Analytics() {
 
-  const { user } = userAuthStore()
+
   const { getUrl, chartData, analyticalUrl, urlLoading } = urlStore()
   const { id } = useParams()
+  const [showLoader, setShowLoader] = useState(true);
 
   useEffect(() => {
-    getUrl(id)
-  }, [getUrl])
+    const fetchData = async () => {
+      setShowLoader(true);
+      await getUrl(id);
+      setTimeout(() => {
+        setShowLoader(false);
+      }, 1800);
+    };
+    fetchData();
+  }, [getUrl, id]);
 
 
   const clickData = chartData?.clickData || [];
@@ -52,12 +61,10 @@ function Analytics() {
   console.log(chartData)
 
 
-  if (urlLoading || !user) <DataLoader />
-
-
-
-
-
+  if (showLoader || urlLoading) {
+    return <DataLoader urlLoading={true} />;
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <motion.div className="max-w-7xl mx-auto">
@@ -146,9 +153,9 @@ function Analytics() {
                     }
                   </Geographies>
                   {chartData && geoData.map(({ name, coordinates, clicks }) => {
-                    if (!coordinates || coordinates.length === 0) return null; 
+                    if (!coordinates || coordinates.length === 0) return null;
 
-                    const radius = Math.sqrt(clicks) / 3 * 10; 
+                    const radius = Math.sqrt(clicks) / 3 * 10;
 
                     return (
                       <Marker key={name} coordinates={coordinates}>

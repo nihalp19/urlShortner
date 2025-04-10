@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link as RouterLink } from 'react-router-dom'
 import { BarChart, ExternalLink, Trash2 } from 'lucide-react'
 import { urlStore } from '../store/urlStore'
 
 function LinkPage() {
-  const { allUrls } = urlStore()
+  const { allUrls ,getAllUrls} = urlStore()
+
+
+  useEffect(() => {
+    getAllUrls()
+  },[getAllUrls])
 
   return (
     <div className="p-4 sm:p-6 md:p-8">
